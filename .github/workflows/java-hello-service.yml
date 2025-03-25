@@ -48,5 +48,4 @@ jobs:
           sed -i "s|fredwinrosales/java-springboot-api:latest|fredwinrosales/java-springboot-api:${{ github.sha }}|" k8s/java-hello-deployment.yaml
 
       - name: Deploy to Kubernetes
-        run: |
-          run: kubectl apply -f k8s/
+        run: kubectl apply -f k8s/
