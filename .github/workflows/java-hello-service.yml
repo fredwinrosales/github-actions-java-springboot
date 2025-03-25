@@ -33,7 +33,7 @@ jobs:
 
       - name: Build Java app
         run: |
-          cd java-springboot-api
+          cd java-hello-service
           ./mvnw clean package -DskipTests
 
       - name: Build and push Docker image
