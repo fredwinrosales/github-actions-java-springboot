@@ -39,7 +39,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./java-springboot-api
+          context: ./java-hello-service
           push: true
           tags: fredwinrosales/java-springboot-api:${{ github.sha }}
 
