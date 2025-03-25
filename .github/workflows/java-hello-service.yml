@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'java-hello-service/**'
+      - 'java-springboot-api/**'
       - 'k8s/**'
       - '.github/workflows/**'
 
@@ -33,21 +33,21 @@ jobs:
 
       - name: Build Java app
         run: |
-          cd java-hello-service
+          cd java-springboot-api
           ./mvnw clean package -DskipTests
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./java-hello-service
+          context: ./java-springboot-api
           push: true
-          tags: fredwinrosales/java-hello-service:${{ github.sha }}
+          tags: fredwinrosales/java-springboot-api:${{ github.sha }}
 
       - name: Update manifest with tag
         run: |
-          sed -i "s|fredwinrosales/java-hello-service:latest|fredwinrosales/java-hello-service:${{ github.sha }}|" k8s/java-hello-deployment.yaml
+          sed -i "s|fredwinrosales/java-springboot-api:latest|fredwinrosales/java-springboot-api:${{ github.sha }}|" k8s/java-hello-deployment.yaml
 
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f k8s/java-hello-deployment.yaml
-          kubectl apply -f k8s/java-hello-service.yaml
+          kubectl apply -f k8s/java-springboot-api.yaml
