@@ -49,5 +49,4 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f k8s/java-hello-deployment.yaml
-          kubectl apply -f k8s/java-springboot-api.yaml
+          run: kubectl apply -f k8s/
