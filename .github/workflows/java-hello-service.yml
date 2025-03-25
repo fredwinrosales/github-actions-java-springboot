@@ -1,0 +1,53 @@
+name: Deploy Java Hello Service to K3s
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'java-hello-service/**'
+      - 'k8s/**'
+      - '.github/workflows/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: [self-hosted, linux]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build Java app
+        run: |
+          cd java-hello-service
+          ./mvnw clean package -DskipTests
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./java-hello-service
+          push: true
+          tags: fredwinrosales/java-hello-service:${{ github.sha }}
+
+      - name: Update manifest with tag
+        run: |
+          sed -i "s|fredwinrosales/java-hello-service:latest|fredwinrosales/java-hello-service:${{ github.sha }}|" k8s/java-hello-deployment.yaml
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f k8s/java-hello-deployment.yaml
+          kubectl apply -f k8s/java-hello-service.yaml
